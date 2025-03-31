@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacked!</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background-color: #000;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #backgroundCode {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            color: #0f0;
+            font-size: 16px;
+            opacity: 0.3;
+            white-space: pre-wrap;
+            animation: codeFlow 20s linear infinite;
+        }
+        @keyframes codeFlow {
+            0% { transform: translateY(100%); }
+            100% { transform: translateY(-100%); }
+        }
+        .container {
+            text-align: center;
+            z-index: 1;
+            color: #0f0;
+        }
+        #message {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        #timer {
+            font-size: 30px;
+            color: #ff0000;
+        }
+        #exitWarning {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ff0000;
+            font-size: 18px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="backgroundCode"></div>
+    <div class="container">
+        <div id="message">Initializing Hack...</div>
+        <div id="timer"></div>
+    </div>
+    <div id="exitWarning">Exit kiya to phone blast ho jayega!</div>
+
+    <script>
+        // Random hacker-style background code
+        const codeLines = [
+            "0101010101", "HACK SYS v1.0", "RUNNING exploit.exe", 
+            "BYPASS FIREWALL", "ENCRYPT DATA", "0xFF 0xA3 0x12", 
+            "INITIATING PHREAK", "SYS32 CORRUPT", "ACCESS GRANTED"
+        ];
+        function generateBackgroundCode() {
+            let code = "";
+            for (let i = 0; i < 100; i++) {
+                const randomLine = codeLines[Math.floor(Math.random() * codeLines.length)];
+                code += randomLine + "\n";
+            }
+            document.getElementById("backgroundCode").innerText = code;
+        }
+        generateBackgroundCode();
+
+        // Prank Sequence
+        const messageDiv = document.getElementById("message");
+        const timerDiv = document.getElementById("timer");
+
+        setTimeout(() => {
+            alert("Aap ka phone hack ho chuka hai!");
+            messageDiv.innerText = "Phone Hack in Progress...";
+        }, 500);
+
+        setTimeout(() => {
+            alert("Instagram Hack Done!");
+            messageDiv.innerText = "Instagram Hacked!";
+        }, 2000);
+
+        setTimeout(() => {
+            alert("WhatsApp Hack Done!");
+            messageDiv.innerText = "WhatsApp Hacked!";
+        }, 3500);
+
+        setTimeout(() => {
+            alert("Phone Hack Done!");
+            messageDiv.innerText = "Phone Fully Hacked!";
+        }, 5000);
+
+        setTimeout(() => {
+            messageDiv.innerText = "3 seconds to cancel everything!";
+            let timeLeft = 3;
+            timerDiv.innerText = `Time Left: ${timeLeft}s`;
+            const timer = setInterval(() => {
+                timeLeft--;
+                timerDiv.innerText = `Time Left: ${timeLeft}s`;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    timerDiv.innerText = "";
+                    messageDiv.innerText = "Phone Hacked by Oggy!";
+                    setTimeout(() => {
+                        messageDiv.innerText = "Message to Oggy";
+                    }, 2000);
+                }
+            }, 1000);
+        }, 6500);
+
+        // Prevent exit warning
+        window.onbeforeunload = function() {
+            return "Exit karoge to phone blast ho jayega!";
+        };
+    </script>
+</body>
+</html>
