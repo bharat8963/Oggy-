@@ -93,7 +93,7 @@
         }
         @keyframes glitch {
             0% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); } /* Reduced shake */
+            20% { transform: translate(-2px, 2px); }
             40% { transform: translate(2px, -2px); }
             60% { transform: translate(-2px, -2px); }
             80% { transform: translate(2px, 2px); }
@@ -101,7 +101,7 @@
         }
         @keyframes subtleGlitch {
             0% { transform: translate(0); }
-            20% { transform: translate(-1px, 1px); } /* Subtle shake */
+            20% { transform: translate(-1px, 1px); }
             40% { transform: translate(1px, -1px); }
             60% { transform: translate(-1px, -1px); }
             80% { transform: translate(1px, 1px); }
@@ -115,7 +115,7 @@
             font-size: 34px;
             color: #0f0;
             text-shadow: 0 0 15px #0f0;
-            animation: glitch 0.5s infinite alternate; /* Slower glitch */
+            animation: glitch 0.5s infinite alternate;
             display: none;
         }
         #topWarning {
@@ -174,12 +174,6 @@
         const topWarningDiv = document.getElementById("topWarning");
         const backgroundCodeDiv = document.getElementById("backgroundCode");
 
-        // Initial Sequence on Load
-        setTimeout(() => {
-            messageDiv.innerText = "Oops... System Fail! Device Fail!";
-            messageDiv.style.animation = "glitch 0.5s infinite alternate"; // Reduced shake
-        }, 2000);
-
         // Fullscreen and Exit Trap
         function startPrankSetup() {
             document.documentElement.requestFullscreen && document.documentElement.requestFullscreen().catch(() => {
@@ -195,41 +189,61 @@
             };
         }
 
-        // Audio Chaos
+        // Audio Chaos (Fixed Beeps + Rumble)
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let isAudioStarted = false;
         function playPanicAudio() {
+            if (isAudioStarted) return; // Prevent multiple instances
+            isAudioStarted = true;
+
+            // Beeps (Clearer and More Consistent)
             const oscillators = [];
             for (let i = 0; i < 3; i++) {
                 const osc = audioCtx.createOscillator();
                 osc.type = 'square';
-                osc.frequency.setValueAtTime(400 + Math.random() * 800, audioCtx.currentTime);
-                osc.connect(audioCtx.destination);
+                const gainNode = audioCtx.createGain();
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime); // Volume control
+                osc.frequency.setValueAtTime(500 + i * 200, audioCtx.currentTime); // Distinct frequencies
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
                 osc.start();
-                oscillators.push(osc);
+                oscillators.push({ osc, gainNode });
             }
             setInterval(() => {
-                oscillators.forEach(osc => {
-                    const newFreq = 400 + Math.random() * 800;
+                oscillators.forEach(({ osc, gainNode }, index) => {
+                    const newFreq = 500 + index * 200 + Math.random() * 300; // Varied beeps
                     osc.frequency.setValueAtTime(newFreq, audioCtx.currentTime);
-                    setTimeout(() => osc.frequency.setValueAtTime(0, audioCtx.currentTime), 100);
+                    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime); // On
+                    setTimeout(() => gainNode.gain.setValueAtTime(0, audioCtx.currentTime), 150); // Off
                 });
-            }, 300 + Math.random() * 500);
+            }, 400); // Faster beep intervals
+
+            // Rumble (Low Background Sound)
             const rumble = audioCtx.createOscillator();
             rumble.type = 'sine';
-            rumble.frequency.setValueAtTime(50, audioCtx.currentTime);
-            const gainNode = audioCtx.createGain();
-            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
-            rumble.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
+            rumble.frequency.setValueAtTime(60, audioCtx.currentTime); // Deeper rumble
+            const rumbleGain = audioCtx.createGain();
+            rumbleGain.gain.setValueAtTime(0.15, audioCtx.currentTime); // Subtle volume
+            rumble.connect(rumbleGain);
+            rumbleGain.connect(audioCtx.destination);
             rumble.start();
         }
+
+        // Start Audio with Workaround
         function startAudio() {
-            try {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume().then(() => {
+                    playPanicAudio();
+                });
+            } else {
                 playPanicAudio();
-            } catch (e) {
-                console.log("Audio blocked. Starting on first click:", e);
-                document.addEventListener("click", playPanicAudio, { once: true });
             }
+            // Fallback: Start on first interaction if blocked
+            document.addEventListener("click", () => {
+                if (!isAudioStarted) {
+                    audioCtx.resume().then(() => playPanicAudio());
+                }
+            }, { once: true });
         }
 
         // Background Code
@@ -333,10 +347,15 @@
             }, 400);
         }
 
-        // Prank Sequence After Initial Messages
+        // Prank Sequence
         setTimeout(() => {
-            startPrankSetup(); // Fullscreen and exit trap
-            startAudio();      // Audio
+            messageDiv.innerText = "Oops... System Fail! Device Fail!";
+            messageDiv.style.animation = "glitch 0.5s infinite alternate";
+        }, 2000);
+
+        setTimeout(() => {
+            startPrankSetup();
+            startAudio(); // Audio starts here
             backgroundCodeDiv.style.display = "block";
             topWarningDiv.style.display = "block";
             errorFlash.style.display = "block";
@@ -365,7 +384,7 @@
         setTimeout(() => {
             showPreMessageCode("instagram", () => {
                 messageDiv.innerText = "[!] Instagram Hacked! LOCKDOWN INITIATED! [0xDEAD]";
-                messageDiv.style.animation = "subtleGlitch 0.5s infinite alternate"; // Subtle shake
+                messageDiv.style.animation = "subtleGlitch 0.5s infinite alternate";
                 errorFlash.innerText = "[ERROR]";
                 showProgressBar(50);
                 triggerGlitch();
@@ -375,7 +394,7 @@
         setTimeout(() => {
             showPreMessageCode("whatsapp", () => {
                 messageDiv.innerText = "[!] WhatsApp Hacked! DATA COMPROMISED! [0xBEEF]";
-                messageDiv.style.animation = "subtleGlitch 0.5s infinite alternate"; // Subtle shake
+                messageDiv.style.animation = "subtleGlitch 0.5s infinite alternate";
                 errorFlash.innerText = "[ERROR]";
                 showProgressBar(75);
                 triggerGlitch();
@@ -412,7 +431,7 @@
                         triggerGlitch();
                         setTimeout(() => {
                             messageDiv.innerText = "[!] Oggy Says: April Fool 😂";
-                            messageDiv.style.animation = "subtleGlitch 0.5s infinite alternate"; // Subtle shake
+                            messageDiv.style.animation = "subtleGlitch 0.5s infinite alternate";
                             errorFlash.innerText = "";
                         }, 2000);
                     }
