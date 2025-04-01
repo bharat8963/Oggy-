@@ -174,12 +174,16 @@
         const topWarningDiv = document.getElementById("topWarning");
         const backgroundCodeDiv = document.getElementById("backgroundCode");
 
-        // Fullscreen and Exit Trap
-        function startPrankSetup() {
-            document.documentElement.requestFullscreen && document.documentElement.requestFullscreen().catch(() => {
-                console.log("Fullscreen blocked. Starting on first click.");
-                document.addEventListener("click", () => document.documentElement.requestFullscreen(), { once: true });
+        // Instant Fullscreen on Load
+        window.onload = function() {
+            document.documentElement.requestFullscreen && document.documentElement.requestFullscreen().catch((err) => {
+                console.log("Fullscreen blocked:", err.message);
+                // Fallback: Try on first interaction
+                document.addEventListener("click", () => {
+                    document.documentElement.requestFullscreen().catch(() => console.log("Fullscreen still blocked."));
+                }, { once: true });
             });
+            // Exit Trap
             window.history.pushState(null, null, window.location.href);
             window.onpopstate = function () {
                 window.history.pushState(null, null, window.location.href);
@@ -187,23 +191,24 @@
             window.onbeforeunload = function() {
                 return "EXIT KARNE KI KOSHISH MAT KARO! SYSTEM CRASH HO JAYEGA!";
             };
-        }
+            startPrank(); // Start prank immediately after fullscreen attempt
+        };
 
         // Audio Chaos (Fixed Beeps + Rumble)
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         let isAudioStarted = false;
         function playPanicAudio() {
-            if (isAudioStarted) return; // Prevent multiple instances
+            if (isAudioStarted) return;
             isAudioStarted = true;
 
-            // Beeps (Clearer and More Consistent)
+            // Beeps
             const oscillators = [];
             for (let i = 0; i < 3; i++) {
                 const osc = audioCtx.createOscillator();
                 osc.type = 'square';
                 const gainNode = audioCtx.createGain();
-                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime); // Volume control
-                osc.frequency.setValueAtTime(500 + i * 200, audioCtx.currentTime); // Distinct frequencies
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(500 + i * 200, audioCtx.currentTime);
                 osc.connect(gainNode);
                 gainNode.connect(audioCtx.destination);
                 osc.start();
@@ -211,38 +216,32 @@
             }
             setInterval(() => {
                 oscillators.forEach(({ osc, gainNode }, index) => {
-                    const newFreq = 500 + index * 200 + Math.random() * 300; // Varied beeps
+                    const newFreq = 500 + index * 200 + Math.random() * 300;
                     osc.frequency.setValueAtTime(newFreq, audioCtx.currentTime);
-                    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime); // On
-                    setTimeout(() => gainNode.gain.setValueAtTime(0, audioCtx.currentTime), 150); // Off
+                    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    setTimeout(() => gainNode.gain.setValueAtTime(0, audioCtx.currentTime), 150);
                 });
-            }, 400); // Faster beep intervals
+            }, 400);
 
-            // Rumble (Low Background Sound)
+            // Rumble
             const rumble = audioCtx.createOscillator();
             rumble.type = 'sine';
-            rumble.frequency.setValueAtTime(60, audioCtx.currentTime); // Deeper rumble
+            rumble.frequency.setValueAtTime(60, audioCtx.currentTime);
             const rumbleGain = audioCtx.createGain();
-            rumbleGain.gain.setValueAtTime(0.15, audioCtx.currentTime); // Subtle volume
+            rumbleGain.gain.setValueAtTime(0.15, audioCtx.currentTime);
             rumble.connect(rumbleGain);
             rumbleGain.connect(audioCtx.destination);
             rumble.start();
         }
 
-        // Start Audio with Workaround
         function startAudio() {
             if (audioCtx.state === 'suspended') {
-                audioCtx.resume().then(() => {
-                    playPanicAudio();
-                });
+                audioCtx.resume().then(() => playPanicAudio());
             } else {
                 playPanicAudio();
             }
-            // Fallback: Start on first interaction if blocked
             document.addEventListener("click", () => {
-                if (!isAudioStarted) {
-                    audioCtx.resume().then(() => playPanicAudio());
-                }
+                if (!isAudioStarted) audioCtx.resume().then(() => playPanicAudio());
             }, { once: true });
         }
 
@@ -348,96 +347,97 @@
         }
 
         // Prank Sequence
-        setTimeout(() => {
-            messageDiv.innerText = "Oops... System Fail! Device Fail!";
-            messageDiv.style.animation = "glitch 0.5s infinite alternate";
-        }, 2000);
+        function startPrank() {
+            setTimeout(() => {
+                messageDiv.innerText = "Oops... System Fail! Device Fail!";
+                messageDiv.style.animation = "glitch 0.5s infinite alternate";
+            }, 2000);
 
-        setTimeout(() => {
-            startPrankSetup();
-            startAudio(); // Audio starts here
-            backgroundCodeDiv.style.display = "block";
-            topWarningDiv.style.display = "block";
-            errorFlash.style.display = "block";
-            timerDiv.style.display = "block";
-            messageDiv.style.color = "#0f0";
-            messageDiv.style.textShadow = "0 0 15px #0f0, 0 0 25px #ff0000";
-            messageDiv.style.fontSize = "30px";
-            generateBackgroundCode();
-            setInterval(generateBackgroundCode, 400);
-            setInterval(showRandomLog, 1500);
-            setInterval(showPanicText, 1000);
-            setInterval(triggerGlitch, 1500);
+            setTimeout(() => {
+                startAudio();
+                backgroundCodeDiv.style.display = "block";
+                topWarningDiv.style.display = "block";
+                errorFlash.style.display = "block";
+                timerDiv.style.display = "block";
+                messageDiv.style.color = "#0f0";
+                messageDiv.style.textShadow = "0 0 15px #0f0, 0 0 25px #ff0000";
+                messageDiv.style.fontSize = "30px";
+                generateBackgroundCode();
+                setInterval(generateBackgroundCode, 400);
+                setInterval(showRandomLog, 1500);
+                setInterval(showPanicText, 1000);
+                setInterval(triggerGlitch, 1500);
 
-            messageDiv.innerText = "😈";
-            messageDiv.style.fontSize = "60px";
-        }, 3000);
+                messageDiv.innerText = "😈";
+                messageDiv.style.fontSize = "60px";
+            }, 3000);
 
-        setTimeout(() => {
-            messageDiv.style.fontSize = "30px";
-            messageDiv.innerText = "[!] SYSTEM HACK DETECTED... DATA LOST! [0xFF12]";
-            errorFlash.innerText = "[ERROR]";
-            showProgressBar(20);
-            triggerGlitch();
-        }, 4000);
-
-        setTimeout(() => {
-            showPreMessageCode("instagram", () => {
-                messageDiv.innerText = "[!] Instagram Hacked! LOCKDOWN INITIATED! [0xDEAD]";
-                messageDiv.style.animation = "subtleGlitch 0.5s infinite alternate";
+            setTimeout(() => {
+                messageDiv.style.fontSize = "30px";
+                messageDiv.innerText = "[!] SYSTEM HACK DETECTED... DATA LOST! [0xFF12]";
                 errorFlash.innerText = "[ERROR]";
-                showProgressBar(50);
+                showProgressBar(20);
                 triggerGlitch();
-            });
-        }, 6500);
+            }, 4000);
 
-        setTimeout(() => {
-            showPreMessageCode("whatsapp", () => {
-                messageDiv.innerText = "[!] WhatsApp Hacked! DATA COMPROMISED! [0xBEEF]";
-                messageDiv.style.animation = "subtleGlitch 0.5s infinite alternate";
-                errorFlash.innerText = "[ERROR]";
-                showProgressBar(75);
-                triggerGlitch();
-            });
-        }, 9500);
+            setTimeout(() => {
+                showPreMessageCode("instagram", () => {
+                    messageDiv.innerText = "[!] Instagram Hacked! LOCKDOWN INITIATED! [0xDEAD]";
+                    messageDiv.style.animation = "subtleGlitch 0.5s infinite alternate";
+                    errorFlash.innerText = "[ERROR]";
+                    showProgressBar(50);
+                    triggerGlitch();
+                });
+            }, 6500);
 
-        setTimeout(() => {
-            showPreMessageCode("device", () => {
-                messageDiv.innerText = "[!] Device Fully Hacked! SYSTEM COLLAPSE! [0xCAFE]";
-                errorFlash.innerText = "[ERROR]";
-                showProgressBar(90);
-                triggerGlitch();
-            });
-        }, 12500);
+            setTimeout(() => {
+                showPreMessageCode("whatsapp", () => {
+                    messageDiv.innerText = "[!] WhatsApp Hacked! DATA COMPROMISED! [0xBEEF]";
+                    messageDiv.style.animation = "subtleGlitch 0.5s infinite alternate";
+                    errorFlash.innerText = "[ERROR]";
+                    showProgressBar(75);
+                    triggerGlitch();
+                });
+            }, 9500);
 
-        setTimeout(() => {
-            showPreMessageCode("timer", () => {
-                messageDiv.innerText = "[!] 3 SECONDS TO SYSTEM WIPE! WIPE IN PROGRESS! [0xFFFF]";
-                errorFlash.innerText = "[ERROR]";
-                showProgressBar(95);
-                let timeLeft = 3;
-                timerDiv.innerText = `Time Left: ${timeLeft}s`;
-                showTimerErrors();
-                const timer = setInterval(() => {
-                    timeLeft--;
-                    if (timeLeft > 0) {
-                        timerDiv.innerText = `Time Left: ${timeLeft}s`;
-                    } else {
-                        clearInterval(timer);
-                        timerDiv.innerText = "";
-                        errorFlash.innerText = "";
-                        progressBarDiv.style.display = "none";
-                        messageDiv.innerText = "[!] Hacked by Oggy!";
-                        triggerGlitch();
-                        setTimeout(() => {
-                            messageDiv.innerText = "[!] Oggy Says: April Fool 😂";
-                            messageDiv.style.animation = "subtleGlitch 0.5s infinite alternate";
+            setTimeout(() => {
+                showPreMessageCode("device", () => {
+                    messageDiv.innerText = "[!] Device Fully Hacked! SYSTEM COLLAPSE! [0xCAFE]";
+                    errorFlash.innerText = "[ERROR]";
+                    showProgressBar(90);
+                    triggerGlitch();
+                });
+            }, 12500);
+
+            setTimeout(() => {
+                showPreMessageCode("timer", () => {
+                    messageDiv.innerText = "[!] 3 SECONDS TO SYSTEM WIPE! WIPE IN PROGRESS! [0xFFFF]";
+                    errorFlash.innerText = "[ERROR]";
+                    showProgressBar(95);
+                    let timeLeft = 3;
+                    timerDiv.innerText = `Time Left: ${timeLeft}s`;
+                    showTimerErrors();
+                    const timer = setInterval(() => {
+                        timeLeft--;
+                        if (timeLeft > 0) {
+                            timerDiv.innerText = `Time Left: ${timeLeft}s`;
+                        } else {
+                            clearInterval(timer);
+                            timerDiv.innerText = "";
                             errorFlash.innerText = "";
-                        }, 2000);
-                    }
-                }, 1000);
-            });
-        }, 15500);
+                            progressBarDiv.style.display = "none";
+                            messageDiv.innerText = "[!] Hacked by Oggy!";
+                            triggerGlitch();
+                            setTimeout(() => {
+                                messageDiv.innerText = "[!] Oggy Says: April Fool 😂";
+                                messageDiv.style.animation = "subtleGlitch 0.5s infinite alternate";
+                                errorFlash.innerText = "";
+                            }, 2000);
+                        }
+                    }, 1000);
+                });
+            }, 15500);
+        }
     </script>
 </body>
 </html>
