@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hacked!</title>
+    <title>SYSTEM BREACH DETECTED</title>
     <style>
         body {
             margin: 0;
@@ -20,114 +20,414 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: 200%;
             color: #0f0;
-            font-size: 16px;
-            opacity: 0.3;
+            font-size: 14px;
+            opacity: 0.9;
             white-space: pre-wrap;
-            animation: codeFlow 20s linear infinite;
+            animation: codeFlow 1s linear infinite;
+            line-height: 1.4;
+            z-index: 0;
+            display: none;
         }
         @keyframes codeFlow {
-            0% { transform: translateY(100%); }
-            100% { transform: translateY(-100%); }
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-50%); }
         }
         .container {
             text-align: center;
             z-index: 1;
-            color: #0f0;
+            color: #fff;
         }
         #message {
+            font-size: 30px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px #fff;
+        }
+        #preMessageCode {
+            font-size: 18px;
+            color: #0f0;
+            text-shadow: 0 0 10px #0f0;
+            animation: flash 0.06s infinite;
+            display: none;
+        }
+        #progressBar {
+            font-size: 20px;
+            color: #0f0;
+            margin-top: 10px;
+            display: none;
+        }
+        #errorFlash {
+            font-size: 26px;
+            color: #ff0000;
+            text-shadow: 0 0 15px #ff0000;
+            animation: flash 0.3s infinite;
+            display: none;
+        }
+        #randomLog {
+            position: absolute;
+            color: #ff0000;
+            font-size: 16px;
+            text-shadow: 0 0 10px #ff0000;
+            animation: flash 0.4s infinite;
+            display: none;
+            z-index: 2;
+        }
+        #timerError {
+            position: absolute;
+            color: #ff0000;
             font-size: 24px;
-            margin-bottom: 20px;
+            text-shadow: 0 0 15px #ff0000;
+            animation: flash 0.2s infinite;
+            display: none;
+            z-index: 3;
+        }
+        #panicText {
+            position: absolute;
+            color: #ff0000;
+            font-size: 20px;
+            text-shadow: 0 0 15px #ff0000;
+            animation: flash 0.4s infinite;
+            display: none;
+            z-index: 2;
+        }
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-5px, 5px); }
+            40% { transform: translate(5px, -5px); }
+            60% { transform: translate(-5px, -5px); }
+            80% { transform: translate(5px, 5px); }
+            100% { transform: translate(0); }
+        }
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
         }
         #timer {
-            font-size: 30px;
-            color: #ff0000;
+            font-size: 34px;
+            color: #0f0;
+            text-shadow: 0 0 15px #0f0;
+            animation: glitch 0.3s infinite alternate;
+            display: none;
         }
-        #exitWarning {
+        #topWarning {
             position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
             color: #ff0000;
-            font-size: 18px;
-            background: rgba(0, 0, 0, 0.8);
+            font-size: 28px;
+            background: rgba(0, 0, 0, 0.9);
             padding: 10px;
-            border-radius: 5px;
+            text-shadow: 0 0 20px #ff0000;
+            animation: flash 0.4s infinite;
+            z-index: 3;
+            letter-spacing: 2px;
+            display: none;
+        }
+        #screenGlitch {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 255, 0, 0.2);
+            z-index: 2;
+            display: none;
+            animation: glitchFade 0.1s infinite;
+        }
+        @keyframes glitchFade {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 0.4; }
         }
     </style>
 </head>
 <body>
     <div id="backgroundCode"></div>
+    <div id="screenGlitch"></div>
+    <div id="topWarning">DON'T EXIT OR SYSTEM CRASHES!</div>
     <div class="container">
-        <div id="message">Initializing Hack...</div>
+        <div id="errorFlash">[ERROR]</div>
+        <div id="preMessageCode"></div>
+        <div id="message">Hi my friends, I am Oggy</div>
+        <div id="progressBar"></div>
         <div id="timer"></div>
     </div>
-    <div id="exitWarning">Exit kiya to phone blast ho jayega!</div>
+    <div id="randomLog"></div>
+    <div id="timerError"></div>
+    <div id="panicText"></div>
 
     <script>
-        // Random hacker-style background code
+        // Prevent Exit Mechanisms
+        // Force Fullscreen
+        document.documentElement.requestFullscreen && document.documentElement.requestFullscreen();
+        
+        // Disable Back Button
+        window.history.pushState(null, null, window.location.href);
+        window.onpopstate = function () {
+            window.history.pushState(null, null, window.location.href);
+        };
+
+        // Strict Exit Warning
+        window.onbeforeunload = function() {
+            return "EXIT KARNE KI KOSHISH MAT KARO! SYSTEM CRASH HO JAYEGA!";
+        };
+
+        // Audio Chaos (Strange Beeps + Low Rumble)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playPanicAudio() {
+            const oscillators = [];
+            for (let i = 0; i < 3; i++) {
+                const osc = audioCtx.createOscillator();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(400 + Math.random() * 800, audioCtx.currentTime);
+                osc.connect(audioCtx.destination);
+                osc.start();
+                oscillators.push(osc);
+            }
+            setInterval(() => {
+                oscillators.forEach(osc => {
+                    const newFreq = 400 + Math.random() * 800;
+                    osc.frequency.setValueAtTime(newFreq, audioCtx.currentTime);
+                    setTimeout(() => osc.frequency.setValueAtTime(0, audioCtx.currentTime), 100);
+                });
+            }, 300 + Math.random() * 500);
+            const rumble = audioCtx.createOscillator();
+            rumble.type = 'sine';
+            rumble.frequency.setValueAtTime(50, audioCtx.currentTime);
+            const gainNode = audioCtx.createGain();
+            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            rumble.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            rumble.start();
+        }
+
+        // Random hacker-style background code with red errors
         const codeLines = [
-            "0101010101", "HACK SYS v1.0", "RUNNING exploit.exe", 
-            "BYPASS FIREWALL", "ENCRYPT DATA", "0xFF 0xA3 0x12", 
-            "INITIATING PHREAK", "SYS32 CORRUPT", "ACCESS GRANTED"
+            "nmap -sS 192.168.1.1", "sqlmap -u target.com --dbs", "hydra -l admin -P pass.txt",
+            "metasploit -x exploit/multi/http", "0101010101", "CRITICAL SYS v9.9", 
+            "EXECUTE trojan.exe", "BYPASS FIREWALL", "ENCRYPT DATA", "0xFF 0xA3 0x12",
+            "PHREAK ACTIVE", "SYS32 CORRUPT", "ACCESS GRANTED", "PING 127.0.0.1",
+            "MALWARE DEPLOYED", "BACKDOOR OPEN", "KERNEL OVERRIDE", "DDoS ACTIVE",
+            "DATA WIPE IMMINENT", "CRYPTO LOCK ENGAGED", "NETWORK DOWN",
+            "<span style='color: #ff0000'>ERROR 0xDEADBEEF</span>", 
+            "<span style='color: #ff0000'>STACK OVERFLOW DETECTED</span>", 
+            "<span style='color: #ff0000'>RANSOM INITIATED</span>"
         ];
         function generateBackgroundCode() {
             let code = "";
-            for (let i = 0; i < 100; i++) {
+            for (let i = 0; i < 400; i++) {
                 const randomLine = codeLines[Math.floor(Math.random() * codeLines.length)];
                 code += randomLine + "\n";
             }
-            document.getElementById("backgroundCode").innerText = code;
+            document.getElementById("backgroundCode").innerHTML = code;
         }
-        generateBackgroundCode();
+
+        // Pre-message code (app-specific)
+        const preCodeLines = {
+            initial: [
+                "SCANNING sys_ports...", "INITIATING exploit...", 
+                "BYPASSING firewall...", "FETCHING sys_data..."
+            ],
+            instagram: [
+                "FETCHING ig_credentials...", "BYPASSING ig_2fa...", 
+                "INJECTING ig_payload...", "DECRYPTING ig_session..."
+            ],
+            whatsapp: [
+                "DECRYPTING wa_chats...", "EXTRACTING wa_keys...", 
+                "RUNNING wa_exploit.exe...", "BYPASSING wa_auth..."
+            ],
+            device: [
+                "OVERRIDING sys_kernel...", "DEPLOYING rootkit...", 
+                "ENCRYPTING storage...", "WIPE_INITIATED..."
+            ],
+            timer: [
+                "PREPARING sys_wipe...", "LOCKING bootloader...", 
+                "ERASING partitions...", "FINALIZING payload..."
+            ]
+        };
+        function showPreMessageCode(app, callback) {
+            const preMessageCodeDiv = document.getElementById("preMessageCode");
+            const messageDiv = document.getElementById("message");
+            const progressBarDiv = document.getElementById("progressBar");
+            messageDiv.style.display = "none";
+            progressBarDiv.style.display = "none";
+            preMessageCodeDiv.style.display = "block";
+            let code = "";
+            const lines = preCodeLines[app] || ["RUNNING exploit.exe..."];
+            for (let i = 0; i < 5; i++) {
+                const randomLine = lines[Math.floor(Math.random() * lines.length)];
+                code += randomLine + "\n";
+            }
+            preMessageCodeDiv.innerText = code;
+            setTimeout(() => {
+                preMessageCodeDiv.style.display = "none";
+                messageDiv.style.display = "block";
+                progressBarDiv.style.display = "block";
+                callback();
+            }, 1000);
+        }
+
+        // Progress bar
+        function showProgressBar(percentage) {
+            const progressBarDiv = document.getElementById("progressBar");
+            progressBarDiv.style.display = "block";
+            const bar = `[${"█".repeat(percentage / 10)}${"-".repeat(10 - percentage / 10)}] ${percentage}%`;
+            progressBarDiv.innerText = bar;
+        }
+
+        // Random system logs
+        const logMessages = [
+            "CRITICAL FAILURE DETECTED", "MEMORY CORRUPTION", 
+            "SYSTEM32 COMPROMISED", "RANSOMWARE ACTIVE",
+            "DATA LOST IMMINENT", "HARDWARE FAILURE"
+        ];
+        function showRandomLog() {
+            const logDiv = document.getElementById("randomLog");
+            logDiv.style.display = "block";
+            const randomMsg = logMessages[Math.floor(Math.random() * logMessages.length)];
+            logDiv.innerText = randomMsg;
+            logDiv.style.top = Math.random() * 80 + 10 + "%";
+            logDiv.style.left = Math.random() * 80 + 10 + "%";
+            setTimeout(() => logDiv.style.display = "none", 1000);
+        }
+
+        // Panic text (extra warnings)
+        const panicMessages = [
+            "CRITICAL ALERT!", "DATA LOST!", "LOCKDOWN INITIATED!",
+            "SYSTEM COLLAPSE!", "UNAUTHORIZED ACCESS!", "FAILURE DETECTED!"
+        ];
+        function showPanicText() {
+            const panicDiv = document.getElementById("panicText");
+            panicDiv.style.display = "block";
+            const randomMsg = panicMessages[Math.floor(Math.random() * panicMessages.length)];
+            panicDiv.innerText = randomMsg;
+            panicDiv.style.top = Math.random() * 80 + 10 + "%";
+            panicDiv.style.left = Math.random() * 80 + 10 + "%";
+            setTimeout(() => panicDiv.style.display = "none", 800);
+        }
+
+        // Screen glitch
+        function triggerGlitch() {
+            const glitchDiv = document.getElementById("screenGlitch");
+            glitchDiv.style.display = "block";
+            setTimeout(() => glitchDiv.style.display = "none", 300);
+        }
+
+        // Timer-specific "ERROR ERROR" flashes
+        function showTimerErrors() {
+            const timerErrorDiv = document.getElementById("timerError");
+            let flashCount = 0;
+            const errorInterval = setInterval(() => {
+                if (flashCount < 7) {
+                    timerErrorDiv.style.display = "block";
+                    timerErrorDiv.innerText = "ERROR ERROR";
+                    timerErrorDiv.style.top = Math.random() * 80 + 10 + "%";
+                    timerErrorDiv.style.left = Math.random() * 80 + 10 + "%";
+                    setTimeout(() => timerErrorDiv.style.display = "none", 200);
+                    flashCount++;
+                } else {
+                    clearInterval(errorInterval);
+                }
+            }, 400);
+        }
 
         // Prank Sequence
         const messageDiv = document.getElementById("message");
         const timerDiv = document.getElementById("timer");
+        const errorFlash = document.getElementById("errorFlash");
+        const progressBarDiv = document.getElementById("progressBar");
+        const topWarningDiv = document.getElementById("topWarning");
+        const backgroundCodeDiv = document.getElementById("backgroundCode");
 
+        // Starting Scene
         setTimeout(() => {
-            alert("Aap ka phone hack ho chuka hai!");
-            messageDiv.innerText = "Phone Hack in Progress...";
-        }, 500);
-
-        setTimeout(() => {
-            alert("Instagram Hack Done!");
-            messageDiv.innerText = "Instagram Hacked!";
+            messageDiv.innerText = "Oops... System Fail! Device Fail!";
+            messageDiv.style.animation = "glitch 0.2s infinite alternate";
         }, 2000);
 
         setTimeout(() => {
-            alert("WhatsApp Hack Done!");
-            messageDiv.innerText = "WhatsApp Hacked!";
-        }, 3500);
+            messageDiv.innerText = "😈";
+            messageDiv.style.fontSize = "60px";
+        }, 3000);
+
+        // Panic Mode Starts
+        setTimeout(() => {
+            backgroundCodeDiv.style.display = "block";
+            topWarningDiv.style.display = "block";
+            errorFlash.style.display = "block";
+            timerDiv.style.display = "block";
+            messageDiv.style.color = "#0f0";
+            messageDiv.style.textShadow = "0 0 15px #0f0, 0 0 25px #ff0000";
+            messageDiv.style.fontSize = "30px";
+            generateBackgroundCode();
+            setInterval(generateBackgroundCode, 400);
+            setInterval(showRandomLog, 1500);
+            setInterval(showPanicText, 1000);
+            setInterval(triggerGlitch, 1500);
+            playPanicAudio();
+
+            messageDiv.innerText = "[!] SYSTEM HACK DETECTED... DATA LOST! [0xFF12]";
+            errorFlash.innerText = "[ERROR]";
+            showProgressBar(20);
+            triggerGlitch();
+        }, 4000);
 
         setTimeout(() => {
-            alert("Phone Hack Done!");
-            messageDiv.innerText = "Phone Fully Hacked!";
-        }, 5000);
-
-        setTimeout(() => {
-            messageDiv.innerText = "3 seconds to cancel everything!";
-            let timeLeft = 3;
-            timerDiv.innerText = `Time Left: ${timeLeft}s`;
-            const timer = setInterval(() => {
-                timeLeft--;
-                timerDiv.innerText = `Time Left: ${timeLeft}s`;
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    timerDiv.innerText = "";
-                    messageDiv.innerText = "Phone Hacked by Oggy!";
-                    setTimeout(() => {
-                        messageDiv.innerText = "Message to Oggy";
-                    }, 2000);
-                }
-            }, 1000);
+            showPreMessageCode("instagram", () => {
+                messageDiv.innerText = "[!] Instagram Hacked! LOCKDOWN INITIATED! [0xDEAD]";
+                errorFlash.innerText = "[ERROR]";
+                showProgressBar(50);
+                triggerGlitch();
+            });
         }, 6500);
 
-        // Prevent exit warning
-        window.onbeforeunload = function() {
-            return "Exit karoge to phone blast ho jayega!";
-        };
+        setTimeout(() => {
+            showPreMessageCode("whatsapp", () => {
+                messageDiv.innerText = "[!] WhatsApp Hacked! DATA COMPROMISED! [0xBEEF]";
+                errorFlash.innerText = "[ERROR]";
+                showProgressBar(75);
+                triggerGlitch();
+            });
+        }, 9500);
+
+        setTimeout(() => {
+            showPreMessageCode("device", () => {
+                messageDiv.innerText = "[!] Device Fully Hacked! SYSTEM COLLAPSE! [0xCAFE]";
+                errorFlash.innerText = "[ERROR]";
+                showProgressBar(90);
+                triggerGlitch();
+            });
+        }, 12500);
+
+        setTimeout(() => {
+            showPreMessageCode("timer", () => {
+                messageDiv.innerText = "[!] 3 SECONDS TO SYSTEM WIPE! WIPE IN PROGRESS! [0xFFFF]";
+                errorFlash.innerText = "[ERROR]";
+                showProgressBar(95);
+                let timeLeft = 3;
+                timerDiv.innerText = `Time Left: ${timeLeft}s`;
+                showTimerErrors();
+                const timer = setInterval(() => {
+                    timeLeft--;
+                    if (timeLeft > 0) {
+                        timerDiv.innerText = `Time Left: ${timeLeft}s`;
+                    } else {
+                        clearInterval(timer);
+                        timerDiv.innerText = "";
+                        errorFlash.innerText = "";
+                        progressBarDiv.style.display = "none";
+                        messageDiv.innerText = "[!] Hacked by Oggy!";
+                        triggerGlitch();
+                        setTimeout(() => {
+                            messageDiv.innerText = "[!] Oggy Says: April Fool 😂";
+                            errorFlash.innerText = "";
+                        }, 2000);
+                    }
+                }, 1000);
+            });
+        }, 15500);
     </script>
 </body>
 </html>
